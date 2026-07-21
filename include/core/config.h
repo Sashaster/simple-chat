@@ -1,0 +1,32 @@
+
+#ifndef CHAT_CONFIG_H
+#define CHAT_CONFIG_H
+
+#include <string_view>
+#include <vector>
+
+#include "core/logging.h"
+
+namespace config {
+
+    using namespace logging;
+
+    struct Configuration {
+        LogLevel log_level;
+        uint16_t port;
+        std::string host;
+
+        Configuration() = delete;
+        Configuration(Configuration &&other) = delete;
+        Configuration& operator=(Configuration &&other) = delete;
+        Configuration& operator=(Configuration const &other) = delete;
+        explicit Configuration(const std::vector<std::string_view> &args);
+        static LogLevel ParseLogLevel(std::string_view level);
+    };
+
+    std::ostream& operator<<(std::ostream &out, const Configuration &config);
+
+}
+
+
+#endif
