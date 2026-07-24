@@ -2,6 +2,7 @@
 
 
 namespace logging {
+
     std::ostream& operator<< (std::ostream &out, const LogLevel level) {
         switch (level) {
             case LogLevel::INFO:
@@ -13,6 +14,16 @@ namespace logging {
            default:
                 return out << "INFO";
         }
+    }
+
+    static Logger default_logger = Logger(LogLevel::INFO);
+
+    void SetDefaultLogger(const Logger &logger) {
+        default_logger = logger;
+    }
+
+    Logger& GetLogger() {
+        return default_logger;
     }
 }
 

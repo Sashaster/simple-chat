@@ -35,7 +35,7 @@ namespace config {
             }
         }
         if (!log_level_set)
-            log_level = LogLevel::DEBUG;
+            log_level = LogLevel::INFO;
         if (!port_set)
             port = 8080;
         if (!host_set)

@@ -17,9 +17,8 @@ namespace config {
         std::string host;
 
         Configuration() = delete;
-        Configuration(Configuration &&other) = delete;
-        Configuration& operator=(Configuration &&other) = delete;
-        Configuration& operator=(Configuration const &other) = delete;
+        Configuration& operator=(Configuration const &) = delete;
+        Configuration(const Configuration &) = default;
         explicit Configuration(const std::vector<std::string_view> &args);
         static LogLevel ParseLogLevel(std::string_view level);
     };
