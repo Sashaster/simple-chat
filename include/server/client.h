@@ -4,30 +4,31 @@
 #define CHAT_CLIENT_H
 
 #include <arpa/inet.h>
+#include <atomic>
 
 #include "core/logging.h"
 #include "core/config.h"
 
-namespace server {
+namespace client {
     using namespace logging;
     using namespace config;
-
 
     class Client {
     private:
         sockaddr_in m_server_conn;
         int m_socket;
-        bool m_connected;
+        static std::atomic<bool> connected;
+        std::optional<std::string> Receive(int timeout = 1) const;
+        void Send(std::string_view message) const;
+        std::mutex m_mutex;
+        std::thread m_reader;
 
     public:
-        Client() = delete;
         Client(const Configuration &config);
-        Client(const Client &) = default;
+        Client(const Client &) = delete;
         Client& operator=(const Client &) = delete;
         void Connect();
-        void Send(std::string_view message) const;
-        bool IsConnected() const;
-        void Disconnect();
+        static void Disconnect(int);
         ~Client();
     };
 

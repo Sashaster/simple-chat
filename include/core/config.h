@@ -16,9 +16,8 @@ namespace config {
         uint16_t port;
         std::string host;
 
-        Configuration() = delete;
         Configuration& operator=(Configuration const &) = delete;
-        Configuration(const Configuration &) = default;
+        Configuration(const Configuration &) = delete;
         explicit Configuration(const std::vector<std::string_view> &args);
         static LogLevel ParseLogLevel(std::string_view level);
     };

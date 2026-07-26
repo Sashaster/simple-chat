@@ -1,6 +1,5 @@
 #include <format>
 #include <vector>
-#include <limits>
 #include <csignal>
 
 #include "core/config.h"
@@ -8,21 +7,6 @@
 #include "server/server.h"
 #include "server/client.h"
 
-
-static void ShowOptions() {
-    std::cout << "1. Disconnect\n2. Send message" << std::endl;
-}
-
-static int GetOption() {
-    int option = 0;
-    std::cin >> option;
-    if (std::cin.fail()) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        throw std::runtime_error("Invalid option");
-    }
-    return option;
-}
 
 int main(int argc, char* argv[]) {
     const std::vector<std::string_view> args(argv + 1, argv + argc);
@@ -45,27 +29,14 @@ int main(int argc, char* argv[]) {
         server.Listen();
     }
     else {
-        auto client = server::Client(cfg);
-        client.Connect();
-        while (client.IsConnected()) {
-            try {
-                ShowOptions();
-                switch (int option = GetOption()) {
-                    case 1:
-                        client.Disconnect();break;
-                    case 2: {
-                        std::string msg;
-                        std::cin >> msg;
-                        client.Send(msg); break;
-                    }
-                    default:
-                        throw std::runtime_error("Invalid option");
-                }
-            }
-            catch (const std::exception &e) {
-                logging::GetLogger().Error(e.what());
-            }
-        }
-    }
+        auto client = client::Client(cfg);
+        std::signal(SIGINT, &client::Client::Disconnect);
+        std::signal(SIGTERM, &client::Client::Disconnect);
+        try {
+            client.Connect();
+        }catch (const std::exception& e) {
+            logging::GetLogger().Error(e.what());
+        }}
+
     return 0;
 }
