@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <thread>
+#include <cstring>
 
 #include "server/client.h"
 #include "server/server.h"
@@ -24,7 +25,7 @@ namespace client {
         if (ready < 0) {
             if (errno == EINTR)
                 throw timeout_exception();
-            throw std::runtime_error(strerror(errno));
+            throw std::runtime_error(std::strerror(errno));
         }
         if (ready == 0) {
             throw timeout_exception();
@@ -35,7 +36,7 @@ namespace client {
             return {};
         }
         if (res < 0) {
-            throw std::runtime_error(strerror(errno));
+            throw std::runtime_error(std::strerror(errno));
         }
         message.resize(res);
         return message;
@@ -44,10 +45,10 @@ namespace client {
     void Client::Connect() {
         m_socket = socket(AF_INET, SOCK_STREAM, 0);
         if (m_socket < 0) {
-            throw std::runtime_error(strerror(errno));
+            throw std::runtime_error(std::strerror(errno));
         }
         if (connect(m_socket, reinterpret_cast<sockaddr *>(&m_server_conn), sizeof(m_server_conn)) < 0) {
-            throw std::runtime_error(strerror(errno));
+            throw std::runtime_error(std::strerror(errno));
         }
         connected = true;
         m_reader = std::thread([this]() {
@@ -90,7 +91,7 @@ namespace client {
 
     void Client::Send(const std::string_view message) const {
         if (send(m_socket, message.data(), message.length(), 0) < 0) {
-            throw std::runtime_error(strerror(errno));
+            throw std::runtime_error(std::strerror(errno));
         }
         GetLogger().Debug(std::format("server<- {}", message));
     }

@@ -19,7 +19,11 @@ namespace logging {
     static Logger default_logger = Logger(LogLevel::INFO);
 
     void SetDefaultLogger(const Logger &logger) {
-        default_logger = logger;
+        static auto logger_set = false;
+        if (!logger_set) {
+            default_logger = logger;
+            logger_set = true;
+        }
     }
 
     Logger& GetLogger() {
