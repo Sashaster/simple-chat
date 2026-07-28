@@ -4,6 +4,7 @@
 #include <iostream>
 #include <chrono>
 #include <mutex>
+#include <format>
 
 namespace logging {
     enum class LogLevel {
@@ -30,7 +31,7 @@ namespace logging {
                 std::lock_guard<std::mutex> lock(m_mutex);
                 const auto timestamp = std::chrono::system_clock::now();
                 auto &out = (level == LogLevel::ERROR) ? std::cerr : std::cout;
-                out << timestamp << " [" << level << "] " << message << " ";
+                out << std::format("{:%Y-%m-%d %H:%M:%S}", timestamp) << " [" << level << "] " << message << " ";
                 ((out << args), ...);
                 out << std::endl;
             }
