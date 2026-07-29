@@ -10,6 +10,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Cache Dependencies
+        uses: actions/cache@v6
+        with:
+          path: build/_deps
+          key: ${{runner.os}}-${{hashFiles('CMakeLists.txt')}}
       - name: Install GCC 13
         run: |
           sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -26,11 +31,6 @@ jobs:
         with:
           name: chat
           path: build/chat
-      - name: Cache Dependencies
-        uses: actions/cache@v6
-        with:
-          path: build/_deps
-          key: ${{runner.os}}-${{hashFiles('CMakeLists.txt')}}
 
   docker:
     name: Build and Push Docker Image
